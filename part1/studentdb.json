@@ -1,0 +1,41 @@
+[
+
+    {
+        "id"    : 1,
+        "name"  :  "su su",
+        "city"  :  "magway"
+    },
+    {
+        "id"    : 2,
+        "name"  :  "oo oo",
+        "city"  :  "yangon"
+    },
+    {
+        "id"    : 3,
+        "name"  :  "ag ag",
+        "city"  :  "mandalay"
+    },
+    {
+        "id"    : 4,
+        "name"  :  "mg mg",
+        "city"  :  "magway"
+    },
+    {
+        "id"    : 5,
+        "name"  :  "zaw zaw",
+        "city"  :  "mandalay"
+    },
+    {
+        "id"    : 6,
+        "name"  :  "htet htet",
+        "city"  :  "bago"
+    },
+    {
+        "id"    : 7,
+        "name"  :  "lin lin",
+        "city"  :  "mandalay"
+    }
+    
+    
+
+]
