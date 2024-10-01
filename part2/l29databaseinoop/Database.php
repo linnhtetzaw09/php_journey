@@ -43,6 +43,26 @@ class Database{
 
     //query binding
     public function dbbind($param,$value,$type = null){
+
+        if(is_null($type)){
+            switch (true){
+                case is_string($value):
+                    $type = PDO::PARAM_STR;
+                    break;
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
+            }
+        }
+
+        // $this->stmt->bindParam($param,$value,$type);
+        $this->stmt->bindValue($param,$value,$type);
         
     }
 
