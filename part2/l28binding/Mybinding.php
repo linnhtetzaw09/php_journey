@@ -40,8 +40,8 @@ echo $obj1->friend();       // My best friend name is Ko Ko
 echo $obj1->getfriend();    // My best friend name is Ko Ko
 
 $obj2 = new hola2();
-echo $obj1->friend();       // My best friend name is Ko Ko and Su Su
-echo $obj1->getfriend();    // My best friend name is Ko Ko and Su Su
+echo $obj2->friend();       // My best friend name is Ko Ko and Su Su
+echo $obj2->getfriend();    // My best friend name is Ko Ko and Su Su
 
 echo "<hr/>";
 
