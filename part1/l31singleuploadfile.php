@@ -37,21 +37,48 @@ ini_set('display_errors',1);
 
 // }
 
-
 if(isset($_POST['submit'])){
 
     $uploadDir = "assets/";
     // $uploadFile = $uploadDir.$_FILES['profile']['name'];       // assets/BG.jpg
     $uploadFile = $uploadDir.basename($_FILES['profile']['name']);       // assets/BG.jpg
+    $uploadSize = $_FILES['profile']['size'];
+    $uploadType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
+    $allowExtension = ["jpg", "jpeg", "png", "gif"];  // corrected "git" to "gif"
+    $errors = [];
 
+    // echo $uploadType;
+    // echo $uploadSize;
 
-    // move_uploaded_file(temp, actual path and name)
-    if(move_uploaded_file($_FILES['profile']['tmp_name'],$uploadFile)){
-        echo "File Successfully Uploaded";
-    }else{
-        echo "Try Again";
+    // check file already or not
+    if(file_exists($uploadFile)){
+        $errors[] = "Sorry, file already exists <br/>";
     }
 
+    // check file size
+    // 60000 bit = 60 kb
+    if($uploadSize > 60000){
+        $errors[] = "Sorry, your file size is too large <br/>";
+    }
+
+    // check file format
+    if(in_array($uploadType, $allowExtension) === false){
+        $errors[] = "Sorry, we only allow JPG, JPEG, PNG, and GIF file types. <br/>";
+    }
+
+    // upload
+    if(empty($errors) === true){
+        echo "Allowed file size<br/>";
+        // move_uploaded_file(temp, actual path and name)
+        if(move_uploaded_file($_FILES['profile']['tmp_name'], $uploadFile)){
+            echo "File Successfully Uploaded";
+        }else{
+            echo "Try Again";
+        }
+    } else {
+        // Corrected $error to $errors
+        echo "<pre>".print_r($errors,true)."</pre>";
+    }
 }
 
 ?>
@@ -63,8 +90,7 @@ if(isset($_POST['submit'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Single Upload File</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
-</head>
+</head> <!-- Removed extra closing head tag -->
 <body>
 
     <div class="col-md-6 mx-auto mt-5">
@@ -88,18 +114,19 @@ if(isset($_POST['submit'])){
 </html>
 
 
-<!-- bytes to kb
-kilobyte = byte / 1024
-2048 / 1024 = 2 kb
 
-kb to Mb
-megabytes = kilobyte / 1024
-3072 / 1024 = 3 Mb
+<!-- //  bytes to kb
+// kilobyte = byte / 1024
+// 2048 / 1024 = 2 kb
 
-Bytes to Mb
- kilobyte = byte / 2024
- megabytes = kilobyte / 1024
+// kb to Mb
+// megabytes = kilobyte / 1024
+// 3072 / 1024 = 3 Mb
 
- megabytes = byte / 1024 x 1024
+// Bytes to Mb
+//  kilobyte = byte / 2024
+//  megabytes = kilobyte / 1024
 
- 100,000 / 1024 x 1024 = 1 Mb -->
+//  megabytes = byte / 1024 x 1024
+
+//  100,000 / 1024 x 1024 = 1 Mb -->
