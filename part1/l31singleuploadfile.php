@@ -76,7 +76,6 @@ if(isset($_POST['submit'])){
             echo "Try Again";
         }
     } else {
-        // Corrected $error to $errors
         echo "<pre>".print_r($errors,true)."</pre>";
     }
 }
