@@ -80,14 +80,27 @@ input.invalid{
     justify-content: end;
 }
 
-.btn, .submit-btn{
+.btn{
+    width: 100%;
     background-color: steelblue;
     color: #fff;
     border: none;
     outline-color: none;
     font-size: 20px;
-    padding: 10px 20px;
     margin-left: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.submit-btn{
+    width: 100%;
+    background-color: steelblue;
+    color: #fff;
+    border: none;
+    outline-color: none;
+    font-size: 20px;
+
+    padding: 5px 0;
     cursor: pointer;
 }
 
@@ -99,13 +112,22 @@ input.invalid{
     background-color: #bbb;
 }
 
-#result-container ul li{
-    list-style-type: none;
-    padding: 3px;
+#result-container {
+    display: none; /* Initial state - will be displayed by JS */
+    width: 100%;
+    padding: 20px;
+    border-top: 2px solid #eee;
 }
 
-.submit-btn{
-    width: 100%;
-    padding: 5px 0;
-    margin-left: 0;
+
+#result-container ul li {
+    list-style-type: none;
+    padding: 3px;
+    font-size: 18px;
+}
+
+/* Ensure alignment for large text in results */
+#result-container ul {
+    padding: 0;
+    margin: 0;
 }

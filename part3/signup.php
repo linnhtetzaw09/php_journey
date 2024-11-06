@@ -1,9 +1,10 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Register Form</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="signupstyle.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
@@ -43,7 +44,7 @@
                         <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Enter Last Name">
                         <div>
                             <label for="profile">Profile Picture</label>
-                            <input type="file" name="profile[]" id="profile" class="form-control" />
+                            <input type="file" name="profile[]" id="profile" class="form-controls" />
                         </div>
                     </div>
                 </div>
@@ -79,12 +80,7 @@
 
                 <div id="result-container">
                 
-                    <!-- <ul>
-                        <li>Name : Alex</li>
-                        <li>Email : alex@gmail.com</li>
-                    </ul>
 
-                    <button type="submit" class="submit-btn" onclick="submitbtn()">Apply Now</button> -->
 
                 </div>
 
@@ -94,7 +90,7 @@
 
     </div>
 
-    <script src="app.js" type="text/javascript"></script>
+    <script src="signup.js" type="text/javascript"></script>
     
 </body>
 </html>
