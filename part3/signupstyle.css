@@ -40,8 +40,12 @@ body{
     background-color: green;
 }
 
-#form{
+.content{
     width: 90%;
+}
+
+#form{
+    width: 100%;
     border-left: 2px solid #eee;
     padding: 50px;
 }
@@ -113,21 +117,11 @@ input.invalid{
 }
 
 #result-container {
-    display: none; /* Initial state - will be displayed by JS */
+    display: none; 
     width: 100%;
-    padding: 20px;
-    border-top: 2px solid #eee;
 }
 
-
-#result-container ul li {
+#result-container ul li{
     list-style-type: none;
     padding: 3px;
-    font-size: 18px;
-}
-
-/* Ensure alignment for large text in results */
-#result-container ul {
-    padding: 0;
-    margin: 0;
 }

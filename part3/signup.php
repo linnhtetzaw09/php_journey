@@ -17,9 +17,11 @@
             <span class="dot"></span>
         </div>
 
-        <div>
-            <h1>Register With Us</h1>
-            <form id="form" action="registerfunction.php" method="post" enctype="multipart/form-data">
+        <div class="content">
+
+            <form id="form" action="./registerfunction.php" method="post" enctype="multipart/form-data">
+
+                <h1>Register With Us</h1>
 
                 <div class="page">
                     <div class="form-group">
@@ -72,19 +74,17 @@
                 </div>
 
                 <div class="d-flex">
-                    <button type="button" id="prevbtn" class="btn" onclick="goNow(-1)">Previous</button>
-                    <button type="button" id="nextbtn" class="btn" onclick="goNow(1)">Next</button>
+                    <button type="button" id="prevbtn" class="btn" onclick="gonow(-1)">Previous</button>
+                    <button type="button" id="nextbtn" class="btn" onclick="gonow(1)">Next</button>
                 </div>
 
-                <p>Already Register ! <a href="signin.php">Signin Here</a></p>
-
-                <div id="result-container">
-                
-
-
-                </div>
+                <p>Already register ? <a href="signin.php">Signin Here</a></p>
 
             </form>
+
+            <div class="result-container">
+
+            </div>
             
         </div>
 
@@ -94,3 +94,5 @@
     
 </body>
 </html>
+
+
