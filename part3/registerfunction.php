@@ -9,7 +9,7 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
     $getfirstname = textFilter($_POST['firstname']);
     $getlastname = textFilter($_POST['lastname']);
     $getemail = textFilter($_POST['email']);
-    $getpassword = textFilter($_POST['password']);
+    $getpassword = md5(textFilter($_POST['password']));
     $getdob = textFilter($_POST['dob']);
     $getphone = textFilter($_POST['phone']);
     $getaddress = textFilter($_POST['address']);
@@ -30,7 +30,7 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
 
         try{
 
-            $stmt = $connect->prepare("INSERT INTO users(profile,firstname,lastname,email,password,dob,phone,address,newsletter) VALUE (:profile,:firstname,:lastname,:email,:password,:dob,:phone,:address,:newsletter)");
+            $stmt = $connect->prepare("INSERT INTO users(profile,firstname,lastname,email,password,dob,phone,address,newsletter) VALUE (:profile,:firstname,:lastname,:email,:password,:dob,:phone,:address,:documents,:newsletter)");
             
             $stmt->bindParam(":profile",$bindprofile);
             $stmt->bindParam(":firstname",$bindfirstname);
@@ -40,7 +40,61 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
             $stmt->bindParam(":dob",$binddob);
             $stmt->bindParam(":phone",$bindphone);
             $stmt->bindParam(":address",$bindaddress);
+            $stmt->bindParam(":documents",$binddocuments);
             $stmt->bindParam(":newsletter",$bindnewsletter);
+
+            // handle profile
+            $countfiles = count($_FILES['profile']['name']);
+
+            if($countfiles){
+                for($x = 0; $x < $countfiles; $x++){
+
+                    $uploadDir = "public/assets/";
+                    $uploadFile = $uploadDir.basename($_FILES['profile']['name']);       // assets/BG.jpg
+                    $uploadSize = $_FILES['profile']['size'];
+                    $uploadType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
+                    $allowExtension = ["jpg", "jpeg", "png", "gif"];  // corrected "git" to "gif"
+
+                    $errors = [];
+
+                    // check file size
+                    // 60000 bit = 60 kb
+                    if($uploadSize > 60000){
+                        $errors[] = "Sorry, your file size is too large <br/>";
+                    }
+
+                    // check file format or extension
+                    if(in_array($uploadType, $allowExtension) === false){
+                        $errors[] = "Sorry, we only allow JPG, JPEG, PNG, and GIF file types. <br/>";
+                    }
+
+                    // upload
+                    if(empty($errors) === true){
+                        echo "Allowed file size<br/>";
+
+                        // move_uploaded_file(temp, actual path and name)
+                        if(move_uploaded_file($_FILES['profile']['tmp_name'], $uploadFile)){
+                            $bindprofile = $uploadFile;
+                            echo "File Successfully Uploaded";
+                        }else{
+                            echo "Try Again";
+                        }
+                    } else {
+                        echo "<pre>".print_r($errors,true)."</pre>";
+                    }
+
+                    // check extension
+
+
+                    // check size
+
+
+
+                    // upload
+
+
+                }
+            }
 
             // $bindprofile = $getprofile;
             $bindfirstname = $getfirstname;
@@ -50,8 +104,20 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
             $binddob = $getdob;
             $bindphone = $getphone;
             $bindaddress = $getaddress;
-            // $binddocuments = $getdocuments;
             $bindnewsletter = $getnewsletter;
+
+            $getdocuments = NULL;
+
+            if(isset($_POST['documents'])){
+                $doocs = $_POST['documents'];
+
+                foreach($doocs as $doc){
+                    $getdocuments += $doc.",";
+                }
+            }
+
+            $binddocuments = $getdocuments;
+
 
             if ($stmt->execute()){
                 // session store

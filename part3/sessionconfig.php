@@ -32,6 +32,9 @@ function redirectTo($url){
     header("Location:$url");
 }
 
+function formatPrint(Array $array){
+    echo "<pre>".print_r($array,true)."</pre>";
+}
 
 
 ?>

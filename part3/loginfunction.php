@@ -7,7 +7,7 @@ require_once('sessionconfig.php');
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $getemail = textFilter($_POST['email']);
-    $getpassword = textFilter($_POST['password']);
+    $getpassword = md5(textFilter($_POST['password']));
 
     echo $getemail;
     echo $getpassword;
@@ -35,10 +35,37 @@ function loginVerify($email, $password) {
         // Correct SQL query with fixed column name
         $stmt = $connect->prepare("SELECT email, password FROM users WHERE email = :email AND password = :password");
 
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":password", $password);
+        $stmt->bindParam(":email", $bindemail);
+        $stmt->bindParam(":password", $bindpassword);
+
+        $bindemail = $email;
+        $bindpassword = $password;
 
         $stmt->execute();
+
+        echo $stmt->rowCount() . "<br/>";
+
+        // formatPrint($stmt->fetch());    // result 1 from first row
+        // formatPrint($stmt->fetch(PDO::FETCH_ASSOC));    // result 1 from first row
+        // formatPrint($stmt->fetch(PDO::FETCH_OBJ));    // result 1 from first row
+        // formatPrint($stmt->fetchAll());    // all results
+        // formatPrint($stmt->fetchAll(PDO::FETCH_ASSOC));    // all results
+        // formatPrint($stmt->fetchAll(PDO::FETCH_OBJ));    // all results
+
+
+        if($stmt->rowCount() == 0){
+            echo "No Data";
+
+            redirectTo('signin.php');
+        }else{
+
+            echo "has data";
+
+            setSession('email',$bindemail);
+            setSession('password',$bindpassword);
+
+            // redirectTo('index.php');
+        }
 
     } catch (PDOException $e) {
         echo "Error found: " . $e->getMessage();
