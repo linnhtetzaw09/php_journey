@@ -5,6 +5,9 @@ ini_set('display_errors',1);
 require_once('dbconnect.php');
 require_once('sessionconfig.php');
 
+if (authFailed()){
+    redirectTo('signin.php');
+}
 
 try{
     global $connect;
@@ -67,3 +70,5 @@ $connect = NULL;
     
 </body>
 </html>
+
+

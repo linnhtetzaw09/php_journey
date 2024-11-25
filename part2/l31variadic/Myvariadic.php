@@ -143,6 +143,16 @@ sayHi("Hello",'su su','nu nu','yu yu');
 echo "<hr/>";
 
 
+// => Coalescing Operator (??)
+
+function myfunseven(...$val){
+    echo $val[1] ? "Valid Data" : "No Data";
+    echo "<br/>";
+    echo $val[1] ?? "No Data";
+}
+
+myfunseven("Hello World","Hello Universe");  // Valid Hello Universe
+myfunseven("Hello World");      // No Data No Data
 
 
 echo "<hr/>";

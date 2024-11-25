@@ -59,12 +59,12 @@ function loginVerify($email, $password) {
             redirectTo('signin.php');
         }else{
 
-            echo "has data";
+            // echo "has data";
 
             setSession('email',$bindemail);
             setSession('password',$bindpassword);
 
-            // redirectTo('index.php');
+            redirectTo('index.php');  // change path
         }
 
     } catch (PDOException $e) {

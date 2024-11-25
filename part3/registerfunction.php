@@ -16,15 +16,15 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
     // $getdocuments = textFilter($_POST['documents']);
     $getnewsletter = textFilter($_POST['newsletter']);
 
-    echo $getfirstname;
-    echo $getlastname;
-    echo $getemail;
-    echo $getpassword;
-    echo $getdob;
-    echo $getphone;
-    echo $getaddress;
-    // echo $getdocuments;
-    echo $getnewsletter;
+    // echo $getfirstname;
+    // echo $getlastname;
+    // echo $getemail;
+    // echo $getpassword;
+    // echo $getdob;
+    // echo $getphone;
+    // echo $getaddress;
+    // // echo $getdocuments;
+    // echo $getnewsletter;
 
     if($getemail && $getpassword){
 
@@ -49,9 +49,15 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
             if($countfiles){
                 for($x = 0; $x < $countfiles; $x++){
 
+                    $getuniqid = uniqid().'_'.time();
                     $uploadDir = "public/assets/";
-                    $uploadFile = $uploadDir.basename($_FILES['profile']['name']);       // assets/BG.jpg
-                    $uploadSize = $_FILES['profile']['size'];
+                    // $uploadFile = $uploadDir.$getuniqid.basename($_FILES['profile']['name'][$x]);       // assets/BG.jpg
+
+                    $getextension = pathinfo($_FILES['profile']['name'][$x], PATHINFO_EXTENSION);
+                    $newfilename = $getuniqid.".".basename($getextension);
+                    $uploadFile = $uploadDir.basename($newfilename);       // assets/BG.jpg
+
+                    $uploadSize = $_FILES['profile']['size'][$x];
                     $uploadType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
                     $allowExtension = ["jpg", "jpeg", "png", "gif"];  // corrected "git" to "gif"
 
@@ -73,7 +79,7 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
                         echo "Allowed file size<br/>";
 
                         // move_uploaded_file(temp, actual path and name)
-                        if(move_uploaded_file($_FILES['profile']['tmp_name'], $uploadFile)){
+                        if(move_uploaded_file($_FILES['profile']['tmp_name'][$x], $uploadFile)){
                             $bindprofile = $uploadFile;
                             echo "File Successfully Uploaded";
                         }else{
@@ -112,7 +118,7 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
                 $doocs = $_POST['documents'];
 
                 foreach($doocs as $doc){
-                    $getdocuments += $doc.",";
+                    $getdocuments .= $doc.",";
                 }
             }
 
@@ -124,7 +130,8 @@ if ($_SERVER(['REQUEST_METHOD']) === "POST"){
                 setSession('email',$bindemail);
                 setSession('password',$bindpassword);
                 // redirect to profile or webpage
-                redirectTo('https://google.com');
+                // redirectTo('https://google.com');
+                redirectTo('public/learningpage/inex.php');
             }else{
                 echo "Try again!";
             }
@@ -167,7 +174,8 @@ function textFilter($data){
     dob DATE,
     phone VARCHAR(13),
     address VARCHAR(100),
-    documents VARCHAR(100)
+    documents VARCHAR(100),
+    newsletter TINYINT
 );
 
 DESC users; -->
