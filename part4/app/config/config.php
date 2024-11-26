@@ -1,5 +1,8 @@
 <?php
 
+echo "  i am working <br/>";
+
+
 define('APPNAME','PHP OOP Project');
 define('URLROOT','http://localhost/phplessons/part4');
 
@@ -15,7 +18,6 @@ define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','L!nhtetz@w492OO2');
 define('DB_NAME','phpdbsix');
-
 
 
 
