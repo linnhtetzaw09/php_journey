@@ -8,39 +8,55 @@ class ArticlesController extends SystemController
 
     public function __construct()
     {
-        echo "I am article controller";
+        // echo "I am article controller";
         $this->mainModel = $this->model('Article');
     }
 
     public function index()
     {
-        echo "I am Article Index Page.";
+        // echo "I am Article Index Page.";
 
         // return $this->view('articles/index');
+        // return $this->view('articles/index', ['greeting'=>"Hello Sir"]);
+
+        $articles = $this->mainModel->getarticles();
+        $datas = [
+            "greeting" => "Have a nic day",
+            'articles' => $articles
+        ];
+        return $this->view('articles/index',$datas);
+
     }
 
     public function create()
     {
-        // Logic for creating an article
+        echo "I am Article create Page. <br/>";
     }
 
-    public function show()
+    public function show($id)
     {
-        // Logic for showing an article
+        echo " i am article show page = id is $id <br/>";
     }
 
-    public function update()
+    public function edit($id)
     {
-        // Logic for updating an article
+        echo " i am article edit page = id is $id <br/>";
     }
 
-    public function destroy()
+    public function update($id)
     {
-        // Logic for deleting an article
+        echo " i am article update page = id is $id <br/>";
+        
+    }
+
+    public function destroy($id)
+    {
+        echo " i am article destroy page = id is $id <br/>";
+        
     }
 }
 
 // Create an instance of the controller to execute the constructor
-new ArticlesController();
+// new ArticlesController();
 
 ?>

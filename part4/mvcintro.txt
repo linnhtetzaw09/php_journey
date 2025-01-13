@@ -27,3 +27,17 @@ show defined as Method
 1 defined as Parameter
 
 ---------------------------------------------------
+
+// https://localhost/phplessons/part4/index.php?name=susu
+// https://localhost/phplessons/part4/index.php?name=yuyu&gender=female&age=21
+
+// https://localhost/phplessons/part4/articles
+// echo $_SERVER['QUERY_STRING'];
+
+// echo $_GET['url'];
+
+
+=add these lines to the end
+<Directory /var/>www/html>
+    AllowOverride All
+<Directory>

@@ -1,6 +1,6 @@
 <?php
 
-require_once '../libraries/SystemDatabase.php';
+// require_once '../libraries/SystemDatabase.php';
 
 class Article{
 
@@ -8,7 +8,7 @@ class Article{
 
     public function __construct()
     {
-        echo "I am Article Model <br/>.";
+        // echo "I am Article Model <br/>.";
 
         $this->db = new SystemDatabase();
     }
@@ -20,7 +20,7 @@ class Article{
 
 }
 
-new Article();
+// new Article();
 
 
 ?>
