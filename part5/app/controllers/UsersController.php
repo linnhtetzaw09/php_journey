@@ -2,90 +2,52 @@
 
 class UsersController extends SystemController
 {
-    private $usermodal;
+    private $userModel;
 
     public function __construct()
     {
-        $this->usermodal = $this->model('User');
+        $this->userModel = $this->model('User');
     }
 
     public function register()
     {
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-            // to prevent cross-site scripting (XSS)
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Sanitize POST data to prevent XSS
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
 
+            // Initialize data array
             $datas = [
-                "fullname" => textfilter($_POST['fullname'] ?? ''),
-                "email" => textfilter($_POST['email']),
-                "password" => textfilter($_POST['password']),
-                "cfmpassword" => textfilter($_POST['cfmpassword']),
+                "fullname" => trim($_POST['fullname'] ?? ''),
+                "email" => trim($_POST['email'] ?? ''),
+                "password" => trim($_POST['password'] ?? ''),
+                "cfmpassword" => trim($_POST['cfmpassword'] ?? ''),
                 "fullname_err" => "",
                 "email_err" => "",
                 "password_err" => "",
                 "cfmpassword_err" => "",
             ];
 
-            // validate fullname
-            if(empty($datas['fullname'])){
-                $datas['fullname_err'] = "Please enter your fullname";
-            }
+            // Validate input
+            $this->validateRegister($datas);
 
-            // validate email
-            if(empty($datas['email'])){
-                $datas['email_err'] = "Please enter your email";
-            } elseif(!filter_var($datas['email'], FILTER_VALIDATE_EMAIL) == false){
-                $datas['email_err'] = "Please enter a valid email";
-            } else{
-                // check if email already exist
-                if($this->usermodal->checkuniqueemail($datas['email'])){
-                    $datas['email_err'] = "Email already exist";
-                }
-            }
-
-            // validate password
-            if(empty($datas['password'])){
-                $datas['password_err'] = "Please enter your password";
-            }elseif(strlen($datas['password']) < 6){
-                $datas['password_err'] = "Password must be at least 6 characters";
-            }
-
-            // validate confirm password
-            if(empty($datas['cfmpassword'])){
-                $datas['cfmpassword_err'] = "Please enter your confirm password";
-            } else{
-                if($datas['password'] != $datas['cfmpassword']){
-                    $datas['cfmpassword_err'] = "Password does not match";
-                }
-            }
-
-            // check if there is no error
-            if(
-                empty($datas['fullname_err']) &&
-                empty($datas['email_err']) &&
-                empty($datas['password_err']) &&
-                empty($datas['cfmpassword_err'])
-            ){
-
-                // hash password
+            // Check for validation errors
+            if (empty($datas['fullname_err']) && empty($datas['email_err']) && empty($datas['password_err']) && empty($datas['cfmpassword_err'])) {
+                // Hash the password
                 $datas['password'] = password_hash($datas['password'], PASSWORD_DEFAULT);
 
-                // register the user
-                if($this->usermodal->register($datas)){
-                    flash('register_success', 'You are registered and can log in');
+                // Register the user
+                if ($this->userModel->register($datas)) {
+                    flash('register_success', 'You have successfully registered! You can now log in.');
                     redirect('users/login');
-                }else{
-                    die('Something went wrong while registering');
+                } else {
+                    die("Something went wrong while registering. Please try again.");
                 }
-
-            }else{
-                // Error sending back to the view
-                return $this->view('users/register',$datas);
+            } else {
+                // Return errors to the view
+                return $this->view('users/register', $datas);
             }
-
-
-        } else{
+        } else {
+            // Load empty form
             $datas = [
                 "fullname" => "",
                 "email" => "",
@@ -96,71 +58,54 @@ class UsersController extends SystemController
                 "password_err" => "",
                 "cfmpassword_err" => "",
             ];
-        }
 
-        return $this->view('users/register',$datas);
+            return $this->view('users/register', $datas);
+        }
     }
 
-    public function login()
-    {
+    public function login(){
+        // Check if the form is submitted
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-            // to prevent cross-site scripting (XSS)
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_SPECIAL_CHARS);
-
-            $datas = [
-                "email" => textfilter($_POST['email']),
-                "password" => textfilter($_POST['password']),
-                "email_err" => "",
-                "password_err" => "",
+            // Process the login data
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+    
+            // Initialize the data array
+            $data = [
+                'email' => $email,
+                'password' => $password,
+                'email_err' => '',
+                'password_err' => ''
             ];
-
-            // validate email
-            if(empty($datas['email'])){
-                $datas['email_err'] = "Please enter your email";
-            } elseif(!filter_var($datas['email'], FILTER_VALIDATE_EMAIL) == false){
-                $datas['email_err'] = "Please enter a valid email";
-            } elseif(!$this->usermodal->checkuniqueemail($datas['email'])){
-                // check if email already exist
-                $datas['email_err'] = "No user found";
+    
+            // Validate the email and password
+            if(empty($data['email'])){
+                $data['email_err'] = 'Please enter your email.';
             }
-
-            // validate password
-            if(empty($datas['password'])){
-                $datas['password_err'] = "Please enter your password";
+    
+            if(empty($data['password'])){
+                $data['password_err'] = 'Please enter your password.';
             }
-
-            // check if there is no error
-            if(empty($datas['email_err']) && empty($datas['password_err'])){
-
-                $loginuser = $this->usermodal->login($datas['email'], $datas['password']);
-
-                if($loginuser){
-                    // successful login
-                    $this->createusersession($loginuser);
-                }else{
-                    // invalid credentials
-                    $datas['password_err'] = "Password incorrect";
-                    return $this->view('users/login',$datas);
-                }
-
-            }else{
-                // Error sending back to the view
-                return $this->view('users/login',$datas);
+    
+            // If there are no errors, attempt login
+            if(empty($data['email_err']) && empty($data['password_err'])){
+                $this->userModel->login($data['email'], $data['password']);
             }
-
-
-        } else{
-            $datas = [
-                "email" => "",
-                "password" => "",
-                "email_err" => "",
-                "password_err" => "",
+    
+            // Load the view and pass the data array to it
+            $this->view('users/login', $data);
+        } else {
+            // If the request is not POST, just load the login view
+            $data = [
+                'email' => '',
+                'password' => '',
+                'email_err' => '',
+                'password_err' => ''
             ];
-
-            return $this->view('users/login',$datas);
+            $this->view('users/login', $data);
         }
     }
+    
 
     public function logout()
     {
@@ -168,9 +113,7 @@ class UsersController extends SystemController
         unset($_SESSION['user_name']);
         unset($_SESSION['user_email']);
 
-        // set offline status
-        
-
+        // Destroy session
         session_destroy();
         redirect('users/login');
     }
@@ -184,7 +127,53 @@ class UsersController extends SystemController
         redirect('welcomes/index');
     }
 
-}
+    // Helper functions for validation
 
+    private function validateRegister(&$datas)
+    {
+        // Validate fullname
+        if (empty($datas['fullname'])) {
+            $datas['fullname_err'] = "Full name is required.";
+        }
+
+        // Validate email
+        if (empty($datas['email'])) {
+            $datas['email_err'] = "Email is required.";
+        } elseif (!filter_var($datas['email'], FILTER_VALIDATE_EMAIL)) {
+            $datas['email_err'] = "Invalid email format.";
+        } elseif ($this->userModel->checkuniqueemail($datas['email'])) {
+            $datas['email_err'] = "Email is already registered.";
+        }
+
+        // Validate password
+        if (empty($datas['password'])) {
+            $datas['password_err'] = "Password is required.";
+        } elseif (strlen($datas['password']) < 6) {
+            $datas['password_err'] = "Password must be at least 6 characters.";
+        }
+
+        // Validate confirm password
+        if (empty($datas['cfmpassword'])) {
+            $datas['cfmpassword_err'] = "Confirm password is required.";
+        } elseif ($datas['password'] !== $datas['cfmpassword']) {
+            $datas['cfmpassword_err'] = "Passwords do not match.";
+        }
+    }
+
+    private function validateLogin(&$datas)
+    {
+        // Validate email
+        if (empty($datas['email'])) {
+            $datas['email_err'] = "Email is required.";
+        } elseif (!filter_var($datas['email'], FILTER_VALIDATE_EMAIL)) {
+            $datas['email_err'] = "Invalid email format.";
+        }
+
+        // Validate password
+        if (empty($datas['password'])) {
+            $datas['password_err'] = "Password is required.";
+        }
+    }
+}
 
 ?>

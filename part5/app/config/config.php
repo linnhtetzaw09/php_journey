@@ -16,7 +16,7 @@ define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','L!nhtetz@w492OO2');
 define('DB_NAME','phpdbseven');
-
+define('DB_PORT', '3307'); 
 
 
 ?>

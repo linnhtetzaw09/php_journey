@@ -25,6 +25,12 @@ class SystemController
             die("Model file does not exist.");
         }
     }
+
+    function authcheck()
+    {
+        return isset($_SESSION['user_id']);
+    }
+
 }
 
 ?>

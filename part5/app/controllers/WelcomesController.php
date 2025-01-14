@@ -1,6 +1,6 @@
 <?php
 
-class WelcomeController extends SystemController
+class WelcomesController extends SystemController
 {
     private $mainModal;
 

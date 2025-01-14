@@ -1,64 +1,67 @@
 <?php
 
-// require_once 'config/config.php';
-
 class SystemDatabase
 {
-    private $dbhost = DB_HOST;
-    private $dbuser = DB_USER;
-    private $dbpass = DB_PASS;
-    private $dbname = DB_NAME;
-
-    private $connect;
+    private $dbhost;
+    private $dbuser;
+    private $dbpass;
+    private $dbname;
+    private $dbport;
+    private $connect = null;
     private $error;
     private $stmt;
 
-    private $dbconnected = false;
-
     public function __construct()
     {
-        // echo "I am system database <br/>.";
+        // Initialize database credentials from constants
+        $this->dbhost = DB_HOST;
+        $this->dbuser = DB_USER;
+        $this->dbpass = DB_PASS;
+        $this->dbname = DB_NAME;
+        $this->dbport = DB_PORT; // Add DB_PORT
 
-        // Set DSN (Data Source Name)
-        $option = [
+        // Set DSN and options
+        $dsn = "mysql:host={$this->dbhost};port={$this->dbport};dbname={$this->dbname};charset=utf8";
+        $options = [
             PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
+        // Establish database connection
         try {
-            $this->connect = new PDO(
-                "mysql:host=$this->dbhost;dbname=$this->dbname",
-                $this->dbuser,
-                $this->dbpass,
-                $option
-            );
-            $this->dbconnected = true;
+            $this->connect = new PDO($dsn, $this->dbuser, $this->dbpass, $options);
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
+            die("Database connection failed: {$this->error}");
         }
     }
 
-    // get PDO ERROR
-    public function geterror(){
+    // Get connection error
+    public function getError(): ?string
+    {
         return $this->error;
     }
 
-    // check database connected
-    public function isconnected(){
-        return $this->dbconnected;
+    // Check connection status
+    public function isConnected(): bool
+    {
+        return $this->connect !== null;
     }
 
-    // prepare with query
-    public function dbquery($query){
+    // Prepare SQL query
+    public function dbquery(string $query): void
+    {
+        if (!$this->isConnected()) {
+            die("Database not connected. Unable to prepare query.");
+        }
         $this->stmt = $this->connect->prepare($query);
     }
 
-    public function dbbind($param,$value,$type=null){
-        if(is_null($type)){
-            switch(true){
-                case is_string($value):
-                    $type = PDO::PARAM_STR;
-                    break;
+    // Bind parameters to the prepared statement
+    public function dbbind($param, $value, $type = null): void
+    {
+        if (is_null($type)) {
+            switch (true) {
                 case is_int($value):
                     $type = PDO::PARAM_INT;
                     break;
@@ -68,54 +71,60 @@ class SystemDatabase
                 case is_null($value):
                     $type = PDO::PARAM_NULL;
                     break;
+                default:
+                    $type = PDO::PARAM_STR;
             }
         }
-
-        // $this->stmt->bindParam($param,$value,$type);
-        $this->stmt->bindValue($param,$value,$type);
-
+        $this->stmt->bindValue($param, $value, $type);
     }
 
-    // execute after prepare
-    public function dbexecute(){
+    // Execute the prepared statement
+    public function dbexecute(): bool
+    {
         return $this->stmt->execute();
     }
 
-    // get all results, as array object
-    public function getmultidataobj(){
+    // Fetch all results as objects
+    public function getmultidataobj(): array
+    {
         $this->dbexecute();
-        // return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    // get all results, as array object
-    public function getmultidataassoc(){
+    // Fetch all results as associative arrays
+    public function getmultidataassoc(): array
+    {
         $this->dbexecute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-        // return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    // get single result, as array associated array
-    public function getsingledataassoc(){
+    // Fetch a single result as an object
+    public function getsingledataobj()
+    {
         $this->dbexecute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
-        // return $this->stmt->fetch(PDO::FETCH_OBJ);
-    }
-
-    // get single result, as array associated array
-    public function getsingledataobj(){
-        $this->dbexecute();
-        // return $this->stmt->fetch(PDO::FETCH_ASSOC);
         return $this->stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    // get db row count
-    public function dbrowcount(){
-        return $this->stmt->rowCount();
+    // Fetch a single result as an associative array
+    public function getsingledataassoc()
+    {
+        $this->dbexecute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Get row count from the last executed statement
+    public function dbrowcount(): int
+    {
+        return $this->stmt->rowCount();
+    }
 }
 
-new SystemDatabase();
+// Test the connection (remove or comment this in production)
+$db = new SystemDatabase();
+if ($db->isConnected()) {
+    // echo "Database connected successfully.";
+} else {
+    echo "Failed to connect to the database.";
+}
 
 ?>
